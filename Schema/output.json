@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "xcresult-to-json output",
+  "type": "object",
+  "properties": {
+    "metrics": {
+      "$ref": "#/$defs/metrics"
+    },
+    "annotations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/annotation"
+      }
+    }
+  },
+  "required": [
+    "annotations",
+    "errors"
+  ],
+  "$defs": {
+    "metrics": {
+      "type": "object",
+      "properties": {
+        "analyzerWarningCount": {
+          "type": "integer"
+        },
+        "errorCount": {
+          "type": "integer"
+        },
+        "testCount": {
+            "type": "integer"
+        },
+        "testFailedCount": {
+          "type": "integer"
+        },
+        "testSkippedCount": {
+          "type": "integer"
+        },
+        "warningCount": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "analyzerWarningCount",
+        "errorCount",
+        "testCount",
+        "testFailedCount",
+        "testSkippedCount",
+        "warningCount"
+      ]
+    },
+    "annotation": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "The file path"
+        },
+        "location": {
+          "$ref": "#/$defs/sourceLocation"
+        },
+        "annotationLevel": {
+          "type": "string",
+          "description": "The level of the annotation.",
+          "enum": [
+            "notice",
+            "warning",
+            "failure"
+          ]
+        },
+        "message": {
+          "type": "string",
+          "description": "A short description"
+        },
+        "title": {
+          "type": "string",
+          "description": "Title",
+          "maxLength": 255
+        }
+      },
+      "required": [
+        "annotationLevel",
+        "message",
+        "title"
+      ]
+    },
+    "sourceLocation": {
+      "type": "object",
+      "properties": {
+        "startLine": {
+          "type": "integer"
+        },
+        "endLine": {
+          "type": "integer"
+        },
+        "startColumn": {
+          "type": "integer"
+        },
+        "endColumn": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "startLine",
+        "endLine"
+      ]
+    }
+  }
+}

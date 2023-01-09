@@ -1,0 +1,3 @@
+import XCResultToJsonLib
+
+XCResultToJsonLib.main()

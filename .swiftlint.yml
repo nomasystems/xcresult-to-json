@@ -1,0 +1,57 @@
+excluded:
+  - .build
+
+opt_in_rules:
+    - discouraged_optional_collection
+    - discouraged_optional_boolean
+
+disabled_rules:
+    - function_body_length
+    - type_body_length
+    - unused_optional_binding
+    - cyclomatic_complexity
+    - function_parameter_count
+    - force_cast
+    - force_try
+    - force_unwrapping
+    - trailing_comma
+    - large_tuple
+
+line_length:
+  warning: 120
+
+file_length:
+  warning: 800
+  error: 1200
+
+type_name:
+  min_length: 2
+  max_length:
+    warning: 45
+    error: 60
+
+identifier_name:
+  max_length: 45
+  allowed_symbols:
+      - _
+  excluded:
+    - id
+    - vc
+    - x
+    - y
+    - ok
+    - on
+    - os
+    - by
+    - qr
+    - x1
+    - x2
+    - y1
+    - y2
+    - to
+    - dp
+    - up
+    - pi
+    - ps
+    - i
+    - j
