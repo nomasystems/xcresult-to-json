@@ -29,9 +29,12 @@ extension Output {
         }
 
         appendAnnotations(issueSummaries: issues?.warningSummaries ?? [], level: .warning)
-        let warningCount = annotations.count
-        let externalWarningCount = annotations.reduce(0, { result, annotation in
-            pathRoot != nil && annotation.isPathRelative ? result + 1 : result
+        let (warningCount, externalWarningCount) = annotations.reduce((0, 0), { result, annotation in
+            let isExternal = (pathRoot != nil && !annotation.isPathRelative)
+            return (
+                result.0 + (!isExternal ? 1 : 0),
+                result.1 + (isExternal ? 1 : 0)
+            )
         })
         appendAnnotations(issueSummaries: issues?.analyzerWarningSummaries ?? [], level: .warning)
         appendAnnotations(issueSummaries: issues?.errorSummaries ?? [], level: .failure)
