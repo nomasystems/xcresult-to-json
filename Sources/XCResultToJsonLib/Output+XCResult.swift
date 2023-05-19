@@ -8,8 +8,9 @@ extension Output {
     }
 
     init(xcresultFile: XCResultFile, pathRoot: String?) {
-        let issues = xcresultFile.getInvocationRecord()?.issues
-        let metrics = xcresultFile.getInvocationRecord()?.metrics
+        let invocationRecord = xcresultFile.getInvocationRecord()
+        let issues = invocationRecord?.issues
+        let metrics = invocationRecord?.metrics
 
         var annotations = [Annotation]()
 
@@ -28,6 +29,13 @@ extension Output {
         }
 
         appendAnnotations(issueSummaries: issues?.warningSummaries ?? [], level: .warning)
+        let (warningCount, externalWarningCount) = annotations.reduce((0, 0), { result, annotation in
+            let isExternal = (pathRoot != nil && !annotation.isPathRelative)
+            return (
+                result.0 + (!isExternal ? 1 : 0),
+                result.1 + (isExternal ? 1 : 0)
+            )
+        })
         appendAnnotations(issueSummaries: issues?.analyzerWarningSummaries ?? [], level: .warning)
         appendAnnotations(issueSummaries: issues?.errorSummaries ?? [], level: .failure)
         appendAnnotations(issueSummaries: issues?.testFailureSummaries ?? [])
@@ -36,7 +44,8 @@ extension Output {
             annotations: annotations,
             metrics: .init(
                 errorCount: metrics?.errorCount ?? 0,
-                warningCount: metrics?.warningCount ?? 0,
+                warningCount: warningCount,
+                externalWarningCount: externalWarningCount,
                 analyzerWarningCount: metrics?.analyzerWarningCount ?? 0,
                 testCount: metrics?.testsCount ?? 0,
                 testFailedCount: metrics?.testsFailedCount ?? 0,
@@ -48,12 +57,13 @@ extension Output {
 
 extension Annotation {
     init?(issueSummary: IssueSummary, level: AnnotationLevel, pathRoot: String?) {
-        var path: String?
+        var path: Path?
         var location: SourceLocation?
         if let documentLocation = issueSummary.documentLocationInCreatingWorkspace {
-            path = relativePath(path: documentLocation.url, pathRoot: pathRoot)
+            path = relativePath(url: documentLocation.url, pathRoot: pathRoot)
             location = SourceLocation(documentLocationUrl: documentLocation.url)
         }
+
         guard location == nil || (path != nil && location != nil) else {
             return nil
         }
@@ -62,7 +72,8 @@ extension Annotation {
             annotationLevel: level,
             title: issueSummary.issueType,
             message: issueSummary.message,
-            path: path,
+            path: path?.value,
+            isPathRelative: path?.isRelative ?? false,
             location: location
         )
     }
@@ -70,7 +81,8 @@ extension Annotation {
     init?(issueSummary: TestFailureIssueSummary, pathRoot: String?) {
         guard
             let documentLocation = issueSummary.documentLocationInCreatingWorkspace,
-            let path = relativePath(path: documentLocation.url, pathRoot: pathRoot),
+            let path = relativePath(url: documentLocation.url, pathRoot: pathRoot),
+            (path.isRelative || pathRoot == nil),
             let location = SourceLocation(documentLocationUrl: documentLocation.url)
         else {
             return nil
@@ -79,7 +91,8 @@ extension Annotation {
             annotationLevel: .failure,
             title: "Test case '\(issueSummary.testCaseName)'",
             message: issueSummary.message,
-            path: path,
+            path: path.value,
+            isPathRelative: path.isRelative,
             location: location
         )
     }
@@ -135,22 +148,27 @@ extension SourceLocation {
     }
 }
 
-func relativePath(path: String, pathRoot: String?) -> String? {
-    guard let urlComponents = URLComponents(string: path) else {
+struct Path: Equatable {
+    let value: String
+    let isRelative: Bool
+}
+
+func relativePath(url: String, pathRoot: String?) -> Path? {
+    guard let urlComponents = URLComponents(string: url) else {
         return nil
     }
     let path = urlComponents.path
     if let pathRoot = pathRoot {
         guard path.hasPrefix(pathRoot) else {
-            return nil
+            return .init(value: path, isRelative: false)
         }
         var path = path
         path.removeFirst(pathRoot.count)
         if path.first == "/" {
             path.removeFirst()
         }
-        return path
+        return .init(value: path, isRelative: true)
     } else {
-        return urlComponents.path
+        return .init(value: path, isRelative: false)
     }
 }

@@ -10,6 +10,7 @@ struct Annotation: Codable {
     let title: String?
     let message: String
     let path: String?
+    let isPathRelative: Bool
     let location: SourceLocation?
 }
 
@@ -29,6 +30,7 @@ struct SourceLocation: Codable {
 struct Metrics: Codable {
     let errorCount: Int
     let warningCount: Int
+    let externalWarningCount: Int
     let analyzerWarningCount: Int
     let testCount: Int
     let testFailedCount: Int

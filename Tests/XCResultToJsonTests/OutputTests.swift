@@ -3,10 +3,10 @@ import XCTest
 
 final class OutputTests: XCTestCase {
     func testRelativePath() {
-        XCTAssertEqual(relativePath(path: "/abc/def", pathRoot: nil), "/abc/def")
-        XCTAssertEqual(relativePath(path: "/abc/def", pathRoot: "/abc"), "def")
-        XCTAssertEqual(relativePath(path: "/abc/def", pathRoot: "/abc/"), "def")
-        XCTAssertNil(relativePath(path: "/ghi/abc", pathRoot: "/abc"))
+        XCTAssertEqual(relativePath(url: "/abc/def", pathRoot: nil), .init(value: "/abc/def", isRelative: false))
+        XCTAssertEqual(relativePath(url: "/abc/def", pathRoot: "/abc"), .init(value: "def", isRelative: true))
+        XCTAssertEqual(relativePath(url: "/abc/def", pathRoot: "/abc/"), .init(value: "def", isRelative: true))
+        XCTAssertEqual(relativePath(url: "/ghi/abc", pathRoot: "/abc"), .init(value: "/ghi/abc", isRelative: false))
     }
 
     func testSourceLocationFromDocumentLocationUrl() throws {
