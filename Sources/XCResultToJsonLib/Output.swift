@@ -30,6 +30,7 @@ struct SourceLocation: Codable {
 struct Metrics: Codable {
     let errorCount: Int
     let warningCount: Int
+    let externalWarningCount: Int
     let analyzerWarningCount: Int
     let testCount: Int
     let testFailedCount: Int

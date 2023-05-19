@@ -29,6 +29,10 @@ extension Output {
         }
 
         appendAnnotations(issueSummaries: issues?.warningSummaries ?? [], level: .warning)
+        let warningCount = annotations.count
+        let externalWarningCount = annotations.reduce(0, { result, annotation in
+            pathRoot != nil && annotation.isPathRelative ? result + 1 : result
+        })
         appendAnnotations(issueSummaries: issues?.analyzerWarningSummaries ?? [], level: .warning)
         appendAnnotations(issueSummaries: issues?.errorSummaries ?? [], level: .failure)
         appendAnnotations(issueSummaries: issues?.testFailureSummaries ?? [])
@@ -37,7 +41,8 @@ extension Output {
             annotations: annotations,
             metrics: .init(
                 errorCount: metrics?.errorCount ?? 0,
-                warningCount: metrics?.warningCount ?? 0,
+                warningCount: warningCount,
+                externalWarningCount: externalWarningCount,
                 analyzerWarningCount: metrics?.analyzerWarningCount ?? 0,
                 testCount: metrics?.testsCount ?? 0,
                 testFailedCount: metrics?.testsFailedCount ?? 0,

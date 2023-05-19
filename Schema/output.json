@@ -27,6 +27,9 @@
         "errorCount": {
           "type": "integer"
         },
+        "externalWarningCount": {
+          "type": "integer"
+        },
         "testCount": {
             "type": "integer"
         },
@@ -43,6 +46,7 @@
       "required": [
         "analyzerWarningCount",
         "errorCount",
+        "externalWarningCount",
         "testCount",
         "testFailedCount",
         "testSkippedCount",
@@ -84,6 +88,7 @@
       },
       "required": [
         "annotationLevel",
+        "isPathRelative",
         "message",
         "title"
       ]
