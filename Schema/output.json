@@ -56,6 +56,10 @@
           "type": "string",
           "description": "The file path"
         },
+        "isPathRelative": {
+          "type": "boolean",
+          "description": "Whether path is relative"
+        },
         "location": {
           "$ref": "#/$defs/sourceLocation"
         },

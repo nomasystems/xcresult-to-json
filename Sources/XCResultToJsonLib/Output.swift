@@ -10,6 +10,7 @@ struct Annotation: Codable {
     let title: String?
     let message: String
     let path: String?
+    let isPathRelative: Bool
     let location: SourceLocation?
 }
 

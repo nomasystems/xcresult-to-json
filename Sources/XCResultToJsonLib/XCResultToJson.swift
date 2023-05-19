@@ -13,7 +13,7 @@ struct XCResultToJson: ParsableCommand {
     @Argument(help: "The input xcresult file path.", transform: URL.init(fileURLWithPath:))
     var xcresultPath: URL
 
-    @Option(help: "If present, file paths are output relative to the specified directory.")
+    @Option(help: "If present, file paths that are relative to the specified directory are output as relative paths.")
     var pathRoot: String?
 
     mutating func run() throws {
